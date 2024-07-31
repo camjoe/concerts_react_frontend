@@ -1,8 +1,9 @@
 import './App.css';
-import Concerts from './components/concerts/Concerts';
+//import Concerts from './components/concerts/Concerts';
 import { Concert, ConcertList} from './components/concerts/Concert.types';
 import { convertFromPython } from './components/concerts/ConvertDbFields';
 import { useEffect, useState } from 'react';
+import ConcertsPage from './components/ConcertsPage';
 
 function App() {
   const [concerts, setConcerts] = useState<ConcertList>()
@@ -42,7 +43,7 @@ function App() {
   return (
     <div>
       { (concerts && concerts.concerts?.length > 0) &&
-        <Concerts {...concerts}/>
+        <ConcertsPage {...concerts}/>
       }
     </div>
   );
