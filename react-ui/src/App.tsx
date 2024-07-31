@@ -1,45 +1,36 @@
 import './App.css';
-import Concerts from './components/concerts/Concerts'
-import { ConcertProp, ConcertListProp } from './components/concerts/Concert.types';
+import Concerts from './components/concerts/Concerts';
+import { Concert, ConcertList} from './components/concerts/Concert.types';
+import { convertFromPython } from './components/concerts/ConvertDbFields';
 import { useEffect, useState } from 'react';
 
-
-
-/*
-import { Route } from 'react-router';
-import { FetchData } from './components/weather/FetchData';
-
-import './custom.css'
-
-const App = () => {
-    return (
-      <div>
-        <Route exact path='/' component={<div></div>} />
-        <Route path='/fetch-data' component={FetchData} />
-      </div>
-    );
-}
-
-export default App;
-*/
-
 function App() {
-  const [concerts, setConcerts] = useState<ConcertListProp>()
+  const [concerts, setConcerts] = useState<ConcertList>()
+
 
   useEffect(() => {
     async function fetchData() {
-      console.log(import.meta.env.VITE_API_URL);
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}concerts`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const result: ConcertProp[] = await response.json();
-        const updatedConcerts: ConcertListProp = {
-          concerts: result
-        }
 
-        setConcerts(updatedConcerts);
+        if (import.meta.env.BACKEND_ENV == "python") {
+          const result: [] = await response.json();
+          const updatedConcerts: ConcertList = {
+            concerts: convertFromPython(result)
+          }
+
+          setConcerts(updatedConcerts);
+        } else {
+          const result: Concert[] = await response.json();
+          const updatedConcerts: ConcertList = {
+            concerts: result
+          }
+
+          setConcerts(updatedConcerts);
+        }
       } catch (error) {
         console.error('Error featching data: ', error);
       }
