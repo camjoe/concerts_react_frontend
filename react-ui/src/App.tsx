@@ -1,7 +1,6 @@
 import './App.css';
 import Concerts from './components/concerts/Concerts';
-import { Concert, ConcertList} from './components/concerts/Concert.types';
-import { convertFromPython } from './components/concerts/ConvertDbFields';
+import { Concert, ConcertList, convertFromPython } from './components/concerts/Concert.types';
 import { useEffect, useState } from 'react';
 
 function App() {
@@ -16,7 +15,7 @@ function App() {
           throw new Error('Network response was not ok');
         }
 
-        if (import.meta.env.BACKEND_ENV == "python") {
+        if (import.meta.env.VITE_BACKEND_ENV == "python") {
           const result: [] = await response.json();
           const updatedConcerts: ConcertList = {
             concerts: convertFromPython(result)
@@ -35,14 +34,14 @@ function App() {
         console.error('Error featching data: ', error);
       }
     }
-      
+
     fetchData();
   }, [])
 
   return (
     <div>
-      { (concerts && concerts.concerts?.length > 0) &&
-        <Concerts {...concerts}/>
+      {(concerts && concerts.concerts?.length > 0) &&
+        <Concerts {...concerts} />
       }
     </div>
   );
