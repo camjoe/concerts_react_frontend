@@ -12,19 +12,11 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Hidden from '@mui/material/Hidden';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import { ConcertList } from './concerts/Concert.types'
+import { dateToDayString, dateToDoorsOpen } from '../utils/formatting';
 
 const DivLayout = styled("div")(({ theme }) => ({
   width: "auto",
-  marginLeft: theme.spacing.unit * 3,
-  marginRight: theme.spacing.unit * 3,
-
-  [theme.breakpoints.up(1100 + theme.spacing.unit * 3 * 2)]: {
-    width: 1100,
-    marginLeft: "auto",
-    marginRight: "auto",
-  },
 }));
 
 const ToolbarToolbarMain = styled(Toolbar)(({ theme }) => ({
@@ -42,11 +34,11 @@ const ToolbarToolbarSecondary = styled(Toolbar)(({ theme }) => ({
 const PaperMainFeaturedPost = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.grey[800],
   color: theme.palette.common.white,
-  marginBottom: theme.spacing.unit * 4,
+  marginBottom: theme.spacing(4),
 }));
 
 const DivMainFeaturedPostContent = styled("div")(({ theme }) => ({
-  padding: `${theme.spacing.unit * 6}px`,
+  padding: `${theme.spacing(6)}px`,
 
   [theme.breakpoints.up("md")]: {
     paddingRight: 0,
@@ -54,7 +46,7 @@ const DivMainFeaturedPostContent = styled("div")(({ theme }) => ({
 }));
 
 const GridMainGrid = styled(Grid)(({ theme }) => ({
-  marginTop: theme.spacing.unit * 3,
+  marginTop: theme.spacing(3),
 }));
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -70,25 +62,24 @@ const StyledCardMedia = styled(CardMedia)(({ theme }) => ({
 }));
 
 const PaperSidebarAboutBox = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing.unit * 2,
+  padding: theme.spacing(2),
   backgroundColor: theme.palette.grey[200],
 }));
 
 const TypographySidebarSection = styled(Typography)(({ theme }) => ({
-  marginTop: theme.spacing.unit * 3,
+  marginTop: theme.spacing(3),
 }));
 
 const StyledFooter = styled("footer")(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
-  marginTop: theme.spacing.unit * 8,
-  padding: `${theme.spacing.unit * 6}px 0`,
+  marginTop: theme.spacing(4),
+  padding: `${theme.spacing(6)}px 0`,
 }));
 
 const sections = ["Concerts", "Bands", "Venues", "About"];
 const social = ["GitHub", "LinkedIn"];
 
 const ConcertsPage: React.FC<ConcertList> = ({ concerts }) => {
-
   return (
     <React.Fragment>
       <CssBaseline />
@@ -119,7 +110,7 @@ const ConcertsPage: React.FC<ConcertList> = ({ concerts }) => {
           {/* Main featured post */}
           <PaperMainFeaturedPost>
             <Grid container>
-              <Grid item md={6}>
+              <Grid item xs={12} md={12} lg={12}>
                 <DivMainFeaturedPostContent>
                   <Typography
                     component="h1"
@@ -127,12 +118,11 @@ const ConcertsPage: React.FC<ConcertList> = ({ concerts }) => {
                     color="inherit"
                     gutterBottom
                   >
-                    Come find a concert near you
+                    Come find a concert near you!
                   </Typography>
                   <Typography variant="h5" color="inherit" paragraph>
-                    Below is a list of concert stored in a Postgresql datase.
-                    One day I hope to fill this information in from
-                    Ticketmaster's api or a similar source.
+                    Below is a list of concerts stored in a Postgresql database.<br></br>
+                    The database is currently local. I hope to host online as well as add a third party api to populate with more data.
                   </Typography>
                 </DivMainFeaturedPostContent>
               </Grid>
@@ -140,28 +130,26 @@ const ConcertsPage: React.FC<ConcertList> = ({ concerts }) => {
           </PaperMainFeaturedPost>
           {/* End main featured post */}
           {/* Sub featured posts */}
-          <GridMainGrid container spacing={40}>
+          <GridMainGrid container spacing={10}>
             {concerts.map((concert) => (
-              <Grid item key={concert.headlinerBand.name} xs={12} md={6}>
+              <Grid item key={concert.id} xs={12} md={6}>
                 <StyledCard>
                   <DivCardDetails>
                     <CardContent>
-                      <Typography component="h2" variant="h5">
+                      <Typography component="h2" variant="h3">
                         {concert.headlinerBand.name}
                       </Typography>
-                      <Typography variant="subtitle1" color="textSecondary">
-                        {concert.date.toLocaleString('en-US', { hour: 'numeric', hour12: true })}
+                      <Typography variant="h6">
+                        {dateToDayString(concert.date)}
                       </Typography>
-                      {concert.supportingBands && concert.supportingBands.length > 0 ? (
+                      <Typography variant="subtitle1" color="textSecondary">
+                        {dateToDoorsOpen(concert.date)}
+                      </Typography>
+                      {concert.supportingBands && concert.supportingBands.length > 0 &&
                         <Typography variant="subtitle1" paragraph>
-                          Come see {concert.headlinerBand.name} with special
-                          guests {concert.supportingBands?.toLocaleString()}!
+                          With special guests {concert.supportingBands.map(band => band.name).join(', ')}!
                         </Typography>
-                      ) : (
-                        <Typography variant="subtitle1" paragraph>
-                          Come see {concert.headlinerBand.name}!
-                        </Typography>
-                      )}
+                      }
                       <Typography variant="subtitle1" color="primary">
                         ${concert.ticketPrice} at {concert.venue.name} in {concert.venue.location}
                       </Typography>
@@ -204,7 +192,7 @@ const ConcertsPage: React.FC<ConcertList> = ({ concerts }) => {
       {/* Footer */}
       <StyledFooter>
         <Typography variant="h6" align="center" gutterBottom>
-          About Me
+          Tech Stack
         </Typography>
         <Typography
           variant="subtitle1"
@@ -212,12 +200,25 @@ const ConcertsPage: React.FC<ConcertList> = ({ concerts }) => {
           color="textSecondary"
           component="p"
         >
-          Front End: React/Typescript Backend: Django/Python (alternative
-          version with C#/.NET)
+          Front End: React/Typescript <br></br>
+          Back End (RESTful API): Django/Python (alternate version with C#/.NET) <br></br>
+          SQL: Local PostgreSQL <br></br>
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          align="center"
+          color="textSecondary"
+          component="p"
+        >
+          Version Control: Git/Github <br></br>
+          Additional Front End: Vite, Materials UI, <br></br>
+          Additional Backend: <br></br>
+          Testing Framworks: <br></br>
+          Third Party APIs:
         </Typography>
       </StyledFooter>
       {/* End footer */}
-    </React.Fragment>
+    </React.Fragment >
   );
 }
 

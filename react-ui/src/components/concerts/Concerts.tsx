@@ -1,24 +1,24 @@
-import React from "react"
-import { Concert as ConcertProp, ConcertList} from "./Concert.types"
+import React, { Fragment } from "react"
+import { Concert as ConcertProp, ConcertList } from "./Concert.types"
+import { dateToShowtimeString } from "../../utils/formatting"
 
-//TODO:
-// map out supporting bands
-// convert time to clock
-// drop decimals from ticket_price
-// fix Concert types camelcase
 const Concert: React.FC<ConcertProp> = ({ headlinerBand, supportingBands, date, ticketPrice, venue }) => {
-  const time = date.toLocaleString('en-US', { hour: 'numeric', hour12: true })
+  const showtime = dateToShowtimeString(date);
 
   return (
     <div>
       <h1>{headlinerBand.name}</h1>
       {supportingBands && supportingBands.length > 0 ? (
-        <h5>Come See {headlinerBand.name} with special guests {supportingBands.toLocaleString()}!</h5>
+        <Fragment>
+          <h3>Come See {headlinerBand.name}!</h3>
+          <h6>with special guests {supportingBands.toLocaleString()}</h6>
+        </Fragment>
       ) : (
-        <h5>Come See {headlinerBand.name}!</h5>
+        <h3>Come See {headlinerBand.name}!</h3>
       )}
-      <h5>{venue.name}: Doors open at {time}</h5>
-      <h5>General Admission Tickets ${ticketPrice}</h5>
+      <h5>{venue.name}</h5>
+      <h5>{showtime}</h5>
+      <h5>${ticketPrice} - GA Tickets</h5>
     </div>
   )
 }
@@ -29,7 +29,7 @@ const Concerts: React.FC<ConcertList> = ({ concerts }) => {
     <ul>
       {concerts.map(concert => (
         <li key={`${concert.id}`}>
-          <Concert {...concert}/>
+          <Concert {...concert} />
         </li>
       ))}
     </ul>
